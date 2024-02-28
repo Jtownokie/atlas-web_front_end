@@ -1,0 +1,39 @@
+/* Task 6 Style Overwrite */
+
+.btn-primary {
+  background-color: #E0003C !important;
+  border-color: #E0003C !important;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+  background-color: #BC1340 !important;
+}
+
+.btn-outline-primary {
+  color: #E0003C !important;
+  border-color: #E0003C !important;
+}
+
+a, a:hover, a:focus {
+  color: #E0003C !important;
+}
+
+.card {
+  border-color: #E0003C !important;
+  border-radius: 1rem !important;
+}
+
+.card-header {
+  background-color: #E0003C !important;
+  border-top-left-radius: 1rem !important;
+  border-top-right-radius: 1rem !important;
+  color: white;
+}
+
+.text-muted {
+  color: #8C8C8C !important;
+}
+
+.border-bottom {
+  border-color: #E0003C !important;
+}
