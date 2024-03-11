@@ -30,7 +30,7 @@ class studentHogwarts {
 }
 
 const harry = new studentHogwarts()
-harry.setName('Harry');
+haryr.setName('Harry');
 harry.rewardStudent();
 harry.rewardStudent();
 harry.rewardStudent();
