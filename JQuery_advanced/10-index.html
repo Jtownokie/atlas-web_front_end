@@ -15,8 +15,26 @@
         crossorigin="anonymous"></script>
       <script type="application/javascript">
         function addPostRow(data) {
-          
+          const postData = $("<p/>").append(
+            $("<span/>").text(`Post created with id ${data.id}, title: ${data.title}, author: ${data.author}`)
+          );
+
+          $("body").append(postData);
         }
+
+        function listPosts() {
+          $.get("http://localhost:3000/posts", function(data, status, xhr) {
+            if (xhr.status === 200) {
+              data.forEach((postData) => addPostRow(postData));
+            } else {
+              alert("Server Error");
+            }
+          });
+        }
+
+        $("document").ready(function() {
+          listPosts();
+        });
       </script>
     </body>
 
