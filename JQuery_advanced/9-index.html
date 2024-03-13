@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+    <head>
+
+        <meta charset="utf-8" />
+        <title>Task 9</title>
+        <style>
+          .loading {
+            opacity: 0.2;
+          }
+        </style>
+
+    </head>
+
+    <body>
+      <script
+        src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+        crossorigin="anonymous"></script>
+      <script type="application/javascript">
+        function createSearchForm() {
+          const newForm = $("<form/>");
+
+          $("body").append(newForm);
+
+          newForm.append([
+            $("<input/>").attr("type", "text"),
+            $("<input/>").attr("type", "submit")
+          ]);
+
+          $("input[type='submit']").click(function(event) {
+            event.preventDefault();
+
+            queryWikipedia($("input[type='text']").val());
+          });
+
+          let resultList = $("<ul/>").attr("id", "results")
+          $("body").append(resultList)
+
+          let paginationList = $("<ul/>").attr("id", "pagination")
+          $("body").append(paginationList)
+        }
+
+        function addNewArticle(id, title, snippet) {
+          const newListItem = $("<li/>");
+
+          newListItem.append([
+            $("<p/>").append([
+              $("<span/>").html(`${id} - `),
+              $("<b/>").html(`${title}`)
+              ]),
+            $("<p/>").html(`${snippet}`)
+          ]);
+
+          $("#results").append(newListItem);
+        }
+
+        function buildWikiSearchUrl(pattern, offset) {
+          const base_url = "https://en.wikipedia.org/w/api.php";
+          const request_url = `?action=query&list=search&sroffset=${offset}&srsearch=`;
+          const jsonFormat = "&format=json"
+          const url = base_url + request_url + pattern + jsonFormat;
+          return url;
+        }
+
+        function queryWikipedia(formSearch, offset = 0) {
+          displayLoading(true);
+          $.ajax({
+            url: `${buildWikiSearchUrl(formSearch, offset)}`,
+            type: "GET",
+            dataType: "jsonp",
+          }).done(function(json) {
+            let searchResults = json.query.search;
+            let totalHits = json.query.searchinfo.totalhits;
+
+            searchResults.forEach((searchObject) => addNewArticle(searchObject.pageid, searchObject.title, searchObject.snippet));
+            displayLoading();
+            buildPagination(formSearch, totalHits, 10, offset);
+          }).fail(function(xhr, status, errorThrown) {
+            console.log(`Failed with Status: ${status}`)
+          })
+        }
+
+        function buildPagination(continueSearch, numberOfItems, itemsPerPage, currentOffset) {
+          $("#pagination").empty();
+
+          for (let i = 1; i < ((numberOfItems + itemsPerPage - 1) / itemsPerPage); i++) {
+            let newListItem = $("<li/>").css({"display": "inline" ,"cursor": "pointer", "margin-left": "10px"}).text(`${i}`)
+            $("#pagination").append(newListItem);
+          }
+
+          $("#pagination li").click(function() {
+              $("#results").empty()
+              $( this ).css("font-weight", "bold");
+              let currentValue = ((parseInt(($( this ).html())) - 1) * 10)
+              queryWikipedia(continueSearch, currentValue)
+            }
+          );
+        }
+
+        function displayLoading(loading) {
+          if (loading) {
+            $("#results").wrap("<div class='loading'></div>");
+          } else {
+            $("#results").unwrap();
+          }
+        }
+
+        $("document").ready(function() {
+          createSearchForm();
+        });
+      </script>
+    </body>
+
+</html>
