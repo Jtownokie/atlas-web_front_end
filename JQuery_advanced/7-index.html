@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+    <head>
+
+        <meta charset="utf-8" />
+        <title>Task 7</title>
+
+    </head>
+
+    <body>
+      <script
+        src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+        crossorigin="anonymous"></script>
+      <script type="application/javascript">
+        function createSearchForm() {
+          const newForm = $("<form/>");
+
+          $("body").append(newForm);
+
+          newForm.append([
+            $("<input/>").attr("type", "text"),
+            $("<input/>").attr("type", "submit")
+          ]);
+
+          $("input[type='submit']").click(function(event) {
+            event.preventDefault();
+
+            queryWikipedia($("input[type='text']").val());
+          });
+
+          $("body").append("<ul/>")
+        }
+
+        function addNewArticle(id, title, snippet) {
+          const newListItem = $("<li/>");
+
+          newListItem.append([
+            $("<p/>").append([
+              $("<span/>").html(`${id} - `),
+              $("<b/>").html(`${title}`)
+              ]),
+            $("<p/>").html(`${snippet}`)
+          ]);
+
+          $("ul").append(newListItem);
+        }
+
+        function buildWikiSearchUrl(pattern) {
+          const base_url = "https://en.wikipedia.org/w/api.php";
+          const request_url = "?action=query&list=search&srsearch=";
+          const jsonFormat = "&format=json"
+          const url = base_url + request_url + pattern + jsonFormat;
+          return url;
+        }
+
+        function queryWikipedia(search) {
+          $.ajax({
+            url: `${buildWikiSearchUrl(search)}`,
+            type: "GET",
+            dataType: "jsonp",
+          }).done(function(json) {
+            const queryResults = json.query.search;
+
+            queryResults.forEach((searchObject) => addNewArticle(searchObject.pageid, searchObject.title, searchObject.snippet));
+          }).fail(function(xhr, status, errorThrown) {
+            console.log(`Failed with Status: ${status}`)
+          })
+        }
+
+        $("document").ready(function() {
+          createSearchForm();
+        });
+      </script>
+    </body>
+
+</html>
