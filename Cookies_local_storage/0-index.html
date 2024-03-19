@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task 0</title>
+</head>
+<body>
+  <h1>Login to the website</h1>
+  <form>
+    <input type="text" placeholder="Firstname" id="firstname">
+    <input type="text" placeholder="Email" id="email">
+    <button onclick="setCookies()">Log me in</button>
+  </form>
+  <h1>Cookies</h1>
+  <button onclick="showCookies()">Show the cookies</button>
+
+  <script>
+    function setCookies() {
+      const firstName = document.getElementById("firstname").value;
+      const emailValue = document.getElementById("email").value;
+
+      document.cookie = `firstname=${firstName}`;
+      document.cookie = `email=${emailValue}`;
+    }
+
+    function showCookies() {
+      const documentBody = document.querySelector("body");
+      const newPTag = document.createElement("p");
+      const pTagValue = decodeURIComponent(document.cookie);
+
+      newPTag.innerHTML = "Cookies:" + pTagValue;
+
+      documentBody.appendChild(newPTag);
+    }
+  </script>
+</body>
+</html>
