@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task 4</title>
+</head>
+<body>
+  <div id="login-form">
+    <h2>Login to the website</h2>
+    <form>
+      <input type="text" placeholder="Firstname" id="firstname">
+      <input type="text" placeholder="Email" id="email">
+      <button onclick="setCookiesAndShowWelcomeMessage()">Log me in</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+  <script>
+    function setCookiesAndShowWelcomeMessage() {
+      let firstName = document.getElementById("firstname").value;
+      let emailValue = document.getElementById("email").value;
+
+      Cookies.set("firstname", firstName, { expires: 10, path:"/" });
+      Cookies.set("email", emailValue, { expires: 10, path:"/" });
+
+      showWelcomeMessageOrForm();
+    }
+
+    function showForm() {
+      if (document.body.contains(document.getElementById("welcome-message"))) {
+        const element = document.getElementById("welcome-message");
+
+        element.parentNode.removeChild(element);
+      }
+
+      document.getElementById("login-form").style.display = "block";
+    }
+
+    function hideForm() {
+      document.getElementById("login-form").style.display = "none";
+    }
+
+    function deleteCookiesAndShowForm() {
+      Cookies.remove("firstname");
+      Cookies.remove("email");
+
+      showForm();
+    }
+
+    function showWelcomeMessageOrForm() {
+      if (Cookies.get("firstname")) {
+        const loginBannerDiv = document.createElement("div");
+        const loginBanner = document.createElement("h1");
+        const logoutLink = document.createElement("a");
+
+        loginBanner.innerHTML = "Welcome: " + Cookies.get("firstname");
+        logoutLink.onclick = deleteCookiesAndShowForm;
+        logoutLink.innerHTML = "(logout)";
+        logoutLink.style.fontWeight = "normal";
+        logoutLink.style.fontStyle = "italic";
+        logoutLink.style.marginLeft = "10px";
+
+        loginBannerDiv.setAttribute("id", "welcome-message");
+        loginBannerDiv.appendChild(loginBanner);
+        loginBanner.appendChild(logoutLink);
+
+        hideForm();
+        document.body.appendChild(loginBannerDiv);
+      } else {
+        showForm();
+      }
+    }
+
+    showWelcomeMessageOrForm();
+  </script>
+</body>
+</html>
