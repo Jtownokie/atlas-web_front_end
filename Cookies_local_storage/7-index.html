@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Task 6</title>
+  <title>Task 7</title>
 </head>
 <body>
   <script>
@@ -16,11 +16,52 @@
       alert("Sorry, your browser does not support Web storage. Try again with a better one")
     }
 
+    function getCartFromStorage() {
+      if (sessionStorage.getItem("cart")) {
+        const retrievedCart = sessionStorage.getItem("cart");
+
+        return JSON.parse(retrievedCart);
+      } else {
+        return {}
+      }
+    }
+
     function addItemToCart(item) {
-      sessionStorage.setItem(`${item}`, "true")
+      let currentCart = getCartFromStorage();
+      if (currentCart.hasOwnProperty(item)) {
+        currentCart[`${item}`] += 1;
+      } else {
+        currentCart[`${item}`] = 1;
+      }
+
+      sessionStorage.setItem("cart", JSON.stringify(currentCart));
+
+      displayCart();
+    }
+
+    function removeItemFromCart(item) {
+      let currentCart = getCartFromStorage();
+
+      if (currentCart.hasOwnProperty(item)) {
+        delete currentCart[`${item}`];
+      }
+
+      sessionStorage.setItem("cart", JSON.stringify(currentCart));
+
+      displayCart();
+    }
+
+    function clearCart() {
+      sessionStorage.clear();
+
+      displayCart();
     }
 
     function createStore() {
+      const newHeader = document.createElement("h2");
+      newHeader.innerHTML = "Available products:";
+      document.body.append(newHeader);
+
       const newList = document.createElement("ul");
       document.body.append(newList);
 
@@ -36,11 +77,56 @@
     }
 
     function displayCart() {
-      if (sessionStorage && sessionStorage.length > 0) {
-        const newPTag = document.createElement("p");
-        newPTag.innerHTML = `You previously had ${sessionStorage.length} items in your cart`;
+      if (document.getElementById("cart-div")) {
+        document.getElementById("cart-div").innerHTML = ''
+      } else {
+        const cartHeader = document.createElement("h2");
+        cartHeader.innerHTML = "Your cart:";
 
-        document.body.append(newPTag);
+        const newDiv = document.createElement("div");
+        newDiv.setAttribute("id", "cart-div");
+
+        document.body.append(cartHeader);
+        document.body.append(newDiv);
+      }
+
+      updateCart();
+    }
+
+    function updateCart() {
+      const cartDiv = document.getElementById("cart-div");
+      const newCartList = document.createElement("ul");
+
+      cartDiv.appendChild(newCartList);
+
+      let currentCart = getCartFromStorage();
+
+      if (Object.keys(currentCart).length === 0) {
+        const emptyCart = document.createElement("li");
+        emptyCart.innerHTML = "Your cart is empty";
+        newCartList.appendChild(emptyCart);
+      } else {
+        const clearCartButton = document.createElement("li");
+        clearCartButton.innerHTML = "Clear my cart";
+        clearCartButton.addEventListener("click", function() {
+          clearCart();
+        });
+        newCartList.appendChild(clearCartButton);
+
+        Object.keys(currentCart).forEach((cartItem) => {
+          const cartListItem = document.createElement("li");
+          const removeButton = document.createElement("span");
+          removeButton.innerHTML = " (remove)";
+
+          cartListItem.innerHTML = cartItem + " x " + currentCart[`${cartItem}`];
+
+          cartListItem.append(removeButton)
+          removeButton.addEventListener("click", function() {
+            removeItemFromCart(cartItem);
+          });
+
+          newCartList.appendChild(cartListItem);
+        });
       }
     }
   </script>
